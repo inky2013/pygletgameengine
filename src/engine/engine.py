@@ -1,9 +1,6 @@
 import pyglet
 import logging
 
-
-
-
 class Engine:
     def __init__(self):
         self._scenestack = []
@@ -23,28 +20,28 @@ class Engine:
         def on_activate():
             for scene in self._scenestack:
                 try:
-                    scene.activate()
+                    if not scene.activate(): return
                 except Exception as e:
                     self.logger.exception(e)
 
         def on_close():
             for scene in self._scenestack:
                 try:
-                    scene.close()
+                    if not scene.close(): return
                 except Exception as e:
                     self.logger.exception(e)
 
         def on_context_lost():
             for scene in self._scenestack:
                 try:
-                    scene.context_lost()
+                    if not scene.context_lost(): return
                 except Exception as e:
                     self.logger.exception(e)
 
         def on_context_state_lost():
             for scene in self._scenestack:
                 try:
-                    scene.context_state_lost()
+                    if not scene.context_state_lost(): return
                 except Exception as e:
                     self.logger.exception(e)
 
@@ -52,7 +49,7 @@ class Engine:
         def on_deactivate():
             for scene in self._scenestack:
                 try:
-                    scene.deactivate()
+                    if not scene.deactivate(): return
                 except Exception as e:
                     self.logger.exception(e)
 
@@ -60,7 +57,7 @@ class Engine:
         def on_draw():
             for scene in self._scenestack:
                 try:
-                    scene.draw()
+                    if not scene.draw(): return
                 except Exception as e:
                     self.logger.exception(e)
 
@@ -68,7 +65,7 @@ class Engine:
         def on_expose():
             for scene in self._scenestack:
                 try:
-                    scene.expose()
+                    if not scene.expose(): return
                 except Exception as e:
                     self.logger.exception(e)
 
@@ -76,7 +73,7 @@ class Engine:
         def on_hide():
             for scene in self._scenestack:
                 try:
-                    scene.hide()
+                    if not scene.hide(): return
                 except Exception as e:
                     self.logger.exception(e)
 
@@ -84,59 +81,110 @@ class Engine:
         def on_key_press(symbol, modifiers):
             for scene in self._scenestack:
                 try:
-                    scene.key_press(symbol, modifiers)
+                    if not scene.key_press(symbol, modifiers): return
+                except Exception as e:
+                    self.logger.exception(e)
+            if symbol == pyglet.window.key.ESCAPE:
+                return pyglet.event.EVENT_HANDLED
+
+        @self.game_window.event
+        def on_key_release(*args):
+            for scene in self._scenestack:
+                try:
+                    if not scene.key_release(*args): return
                 except Exception as e:
                     self.logger.exception(e)
 
         @self.game_window.event
-        def on_key_release(symbol, modifiers):
-            pass
+        def on_mouse_drag(*args):
+            for scene in self._scenestack:
+                try:
+                    if not scene.mouse_drag(*args): return
+                except Exception as e:
+                    self.logger.exception(e)
 
         @self.game_window.event
-        def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
-            pass
+        def on_mouse_enter(*args):
+            for scene in self._scenestack:
+                try:
+                    if not scene.mouse_enter(*args): return
+                except Exception as e:
+                    self.logger.exception(e)
 
         @self.game_window.event
-        def on_mouse_enter(x, y):
-            pass
+        def on_mouse_leave(*args):
+            for scene in self._scenestack:
+                try:
+                    if not scene.mouse_leave(*args): return
+                except Exception as e:
+                    self.logger.exception(e)
 
         @self.game_window.event
-        def on_mouse_leave(x, y):
-            pass
+        def on_mouse_motion(*args):
+            for scene in self._scenestack:
+                try:
+                    if not scene.mouse_motion(*args): return
+                except Exception as e:
+                    self.logger.exception(e)
 
         @self.game_window.event
-        def on_mouse_motion(x, y, dx, dy):
-            pass
+        def on_mouse_press(*args):
+            for scene in self._scenestack:
+                try:
+                    if not scene.mouse_press(*args): return
+                except Exception as e:
+                    self.logger.exception(e)
 
         @self.game_window.event
-        def on_mouse_press(x, y, button, modifiers):
-            pass
+        def on_mouse_scroll(*args):
+            for scene in self._scenestack:
+                try:
+                    if not scene.mouse_scroll(*args): return
+                except Exception as e:
+                    self.logger.exception(e)
 
         @self.game_window.event
-        def on_mouse_scroll(x, y, scroll_x, scroll_y):
-            pass
+        def on_mouse_release(*args):
+            for scene in self._scenestack:
+                try:
+                    if not scene.mouse_release(*args): return
+                except Exception as e:
+                    self.logger.exception(e)
 
         @self.game_window.event
-        def on_mouse_release(x, y, button, modifiers):
-            pass
+        def on_move(*args):
+            for scene in self._scenestack:
+                try:
+                    if not scene.move(*args): return
+                except Exception as e:
+                    self.logger.exception(e)
 
         @self.game_window.event
-        def on_move(x, y):
-            pass
-
-        @self.game_window.event
-        def on_resize(width, height):
-            pass
+        def on_resize(*args):
+            for scene in self._scenestack:
+                try:
+                    if not scene.resize(*args): return
+                except Exception as e:
+                    self.logger.exception(e)
 
         @self.game_window.event
         def on_show():
-            pass
+            for scene in self._scenestack:
+                try:
+                    if not scene.show(): return
+                except Exception as e:
+                    self.logger.exception(e)
 
         def update(*args):
-            pass
+            for scene in self._scenestack:
+                try:
+                    if not scene.update(*args): return
+                except Exception as e:
+                    self.logger.exception(e)
 
         if fps is not None:
             pyglet.clock.schedule_interval(update, 1 / float(fps))
+            pyglet.clock.schedule_interval(on_draw, 1 / float(fps))
 
         pyglet.app.run()
 
