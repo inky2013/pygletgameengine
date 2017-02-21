@@ -1,5 +1,6 @@
 import pyglet
 import logging
+from json import dumps as json_dumps
 
 
 class _Event:
@@ -37,9 +38,23 @@ class Engine:
     def __init__(self, config={'catch_events': False}):
         self.scene_manager = _SceneManager()
         self.config = config
+        self._saves = {}
         self._window = None
         self.logger = _generate_logger(__name__)
         self.size = [800, 600]
+
+    def add_saveable_object(self, obj, jsonfile=None):
+        self._saves[obj] = jsonfile
+
+
+    def save(self):
+        for key in self._saves:
+            json = key.save()
+            if (key is not None) and (type(json).__name__ == 'dict'):
+                f = open(self._saves[key], 'w+')
+                f.write(json_dumps(json))
+                f.close()
+
 
     def present(self, x=800, y=600, fps=60, resizable=False, fullscreen=False):
         self.size = [x, y]

@@ -5,14 +5,10 @@ from random import randint
 
 game = engine.Engine()
 
-class Particle(pyglet.sprite.Sprite):
-    def __init__(self, x, y):
-        super().__init__(img=pyglet.image.load('assets/sparkle.png'), x=x, y=y)
-        self.life = 0
 
 class TestScene(engine.Scene):
-    def __init__(self):
-        super().__init__('testscene')
+    def __init__(self, game):
+        super().__init__('testscene', game)
         self.z_index = 1
         self._colours = [0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255]
         self._colours_target = copy(self._colours)
@@ -38,7 +34,6 @@ class TestScene(engine.Scene):
             for x in range(len(self._colours)):
                 self._colours[x] += self.get_amt(self._colours[x], self._colours_target[x])
 
-
     def draw(self):
         pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
                              ('v2f', [
@@ -49,6 +44,6 @@ class TestScene(engine.Scene):
                              ]),
                              ('c4B', self._colours))
 
-game.scene_manager['test'] = TestScene()
+game.scene_manager['test'] = TestScene(game)
 
 game.present(resizable=True)

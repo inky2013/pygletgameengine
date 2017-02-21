@@ -1,8 +1,9 @@
 
 
 class Scene:
-    def __init__(self, name):
+    def __init__(self, name, game):
         self.name = name
+        self.game = game
 
     def activate(self):
         pass
@@ -62,4 +63,7 @@ class Scene:
         pass
 
     def show(self):
+        pass
+
+    def save(self):
         pass
