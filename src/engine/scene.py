@@ -33,3 +33,33 @@ class Scene:
 
     def key_press(self, key, modifier):
         pass
+
+    def mouse_motion(self, x, y, dx, dy):
+        pass
+
+    def mouse_drag(self, x, y, dx, dy):
+        pass
+
+    def mouse_enter(self, x, y):
+        pass
+
+    def mouse_leave(self, x, y):
+        pass
+
+    def mouse_press(self, x, y, btn, modifier):
+        pass
+
+    def mouse_scroll(self, x, y, scroll_x, scroll_y):
+        pass
+
+    def mouse_release(self, x, y, button, modifiers):
+        pass
+
+    def move(self, x, y):
+        pass
+
+    def resize(self, width, height):
+        pass
+
+    def show(self):
+        pass

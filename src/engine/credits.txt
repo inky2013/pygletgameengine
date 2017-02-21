@@ -1,0 +1,1 @@
+A* Path finding algorithm is by jamiees2 on GitHub (https://gist.github.com/jamiees2/5531924)
