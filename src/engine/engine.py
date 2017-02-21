@@ -1,21 +1,25 @@
 import pyglet
 import logging
 from json import dumps as json_dumps
+from engine.scene import _DefaultCrashScene
 
 
 class _Event:
     def __init__(self):
-        self._is_propegating_event = True
+        self._is_propagating_event = True
 
     def stop_propegation(self):
-        self._is_propegating_event = False
+        self._is_propagating_event = False
 
-    def is_propegating_event(self):
-        return self._is_propegating_event
+    def is_propagating_event(self):
+        return self._is_propagating_event
 
 
 class _SceneManager:
     def __init__(self):
+        self._scenes = []
+
+    def clear(self):
         self._scenes = []
 
     def __iter__(self):
@@ -27,6 +31,11 @@ class _SceneManager:
         self._scenes.append(value)
         self._scenes.sort(key=lambda x: x.z_index, reverse=False)
 
+    def __delitem__(self, key):
+        for item in self._scenes:
+            if item.name == key:
+                del item
+
     def __getitem__(self, key):
         for i in self._scenes:
             if i.name == key:
@@ -35,7 +44,9 @@ class _SceneManager:
 
 
 class Engine:
-    def __init__(self, config={'catch_events': False}):
+    def __init__(self, config=None):
+        if config is None:
+            config = {'catch_events': False, 'crash_scene': None}
         self.scene_manager = _SceneManager()
         self.config = config
         self._saves = {}
@@ -43,9 +54,8 @@ class Engine:
         self.logger = _generate_logger(__name__)
         self.size = [800, 600]
 
-    def add_saveable_object(self, obj, jsonfile=None):
+    def add_save_object(self, obj, jsonfile=None):
         self._saves[obj] = jsonfile
-
 
     def save(self):
         for key in self._saves:
@@ -54,6 +64,15 @@ class Engine:
                 f = open(self._saves[key], 'w+')
                 f.write(json_dumps(json))
                 f.close()
+
+    def crash(self):
+        self.scene_manager.clear()
+        cscene = None
+        if self.config['crash_scene'] is not None:
+            cscene = self.config['crash_scene']
+        else:
+            cscene = _DefaultCrashScene('crash', self)
+        self.scene_manager['crash'] = cscene
 
 
     def present(self, x=800, y=600, fps=60, resizable=False, fullscreen=False):
@@ -262,6 +281,10 @@ class Engine:
 
         @self._window.event
         def on_resize(x, y):
+            if x < 2:
+                self._window.width = 2
+            if y < 2:
+                self._window.height = 2
             self.size = [x, y]
             for scene in self.scene_manager:
                 try:

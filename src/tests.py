@@ -24,6 +24,7 @@ class TestScene(engine.Scene):
             return 0
 
     def update(self):
+        self.game.crash()
         if self._colours == self._colours_target:
             self._colours_target = []
             for x in range(4):
