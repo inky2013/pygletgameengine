@@ -1,5 +1,6 @@
 import pyglet
 
+
 class Scene:
     def __init__(self, name, game):
         self.name = name
@@ -39,7 +40,7 @@ class Scene:
     def mouse_motion(self, x, y, dx, dy):
         pass
 
-    def mouse_drag(self, x, y, dx, dy):
+    def mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         pass
 
     def mouse_enter(self, x, y):
@@ -68,9 +69,74 @@ class Scene:
 
     def save(self):
         pass
+    
+    
+class BlockingScene(Scene):
+    def activate(self):
+        return False
+
+    def close(self):
+        return False
+
+    def context_lost(self):
+        return False
+
+    def context_state_lost(self):
+        return False
+
+    def deactivate(self):
+        return False
+
+    def update(self):
+        return False
+
+    def draw(self):
+        return False
+
+    def expose(self):
+        return False
+
+    def hide(self):
+        return False
+
+    def key_press(self, key, modifier):
+        return False
+
+    def mouse_motion(self, x, y, dx, dy):
+        return False
+
+    def mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+        return False
+
+    def mouse_enter(self, x, y):
+        return False
+
+    def mouse_leave(self, x, y):
+        return False
+
+    def mouse_press(self, x, y, btn, modifier):
+        return False
+
+    def mouse_scroll(self, x, y, scroll_x, scroll_y):
+        return False
+
+    def mouse_release(self, x, y, button, modifiers):
+        return False
+
+    def move(self, x, y):
+        return False
+
+    def resize(self, width, height):
+        return False
+
+    def show(self):
+        return False
+
+    def save(self):
+        return False
 
 
-class _DefaultCrashScene(Scene):
+class _DefaultCrashScene(BlockingScene):
     def __init__(self, *args):
         super().__init__(*args)
         self._colours = (244, 67, 54, 255,
@@ -94,6 +160,7 @@ class _DefaultCrashScene(Scene):
 
     def activate(self):
         self.game.save()
+        return False
 
     def resize(self, width, height):
         self.crash_title.font_size = width/20
@@ -102,6 +169,7 @@ class _DefaultCrashScene(Scene):
         self.crash_desc.x = width/2
         self.crash_title.y = (height/2)+(width/20)
         self.crash_desc.y = (height/2)-(width/20)
+        return False
 
     def draw(self):
         pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
@@ -114,3 +182,4 @@ class _DefaultCrashScene(Scene):
                              ('c4B', self._colours))
         self.crash_title.draw()
         self.crash_desc.draw()
+        return False

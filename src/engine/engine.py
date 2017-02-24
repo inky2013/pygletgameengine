@@ -1,18 +1,7 @@
 import pyglet
 import logging
 from json import dumps as json_dumps
-from engine.scene import _DefaultCrashScene
-
-
-class _Event:
-    def __init__(self):
-        self._is_propagating_event = True
-
-    def stop_propegation(self):
-        self._is_propagating_event = False
-
-    def is_propagating_event(self):
-        return self._is_propagating_event
+from engine.components.scene import _DefaultCrashScene
 
 
 class _SceneManager:
@@ -45,14 +34,22 @@ class _SceneManager:
 
 class Engine:
     def __init__(self, config=None):
-        if config is None:
-            config = {'catch_events': False, 'crash_scene': None}
         self.scene_manager = _SceneManager()
         self.config = config
         self._saves = {}
         self._window = None
         self.logger = _generate_logger(__name__)
         self.size = [800, 600]
+
+        if config is None:
+            config = {'catch_events': False,
+                      'crash_scene': _DefaultCrashScene('crash_scene', self),
+                      'gl_blending': True}
+
+        if config['gl_blending']:
+            pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
+            pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)
+            self.logger.info('Enabled OpenGL Blending')
 
     def add_save_object(self, obj, jsonfile=None):
         self._saves[obj] = jsonfile
@@ -83,7 +80,7 @@ class Engine:
         def on_activate():
             for scene in self.scene_manager:
                 try:
-                    if not scene.activate(): return
+                    if scene.activate() is False: return
                 except Exception as e:
                     if self.config['catch_events']:
                         self.logger.exception(e)
@@ -94,7 +91,7 @@ class Engine:
         def on_close():
             for scene in self.scene_manager:
                 try:
-                    if not scene.close(): return
+                    if scene.close() is False: return
                 except Exception as e:
                     if self.config['catch_events']:
                         self.logger.exception(e)
@@ -105,7 +102,7 @@ class Engine:
         def on_context_lost():
             for scene in self.scene_manager:
                 try:
-                    if not scene.context_lost(): return
+                    if scene.context_lost() is False: return
                 except Exception as e:
                     if self.config['catch_events']:
                         self.logger.exception(e)
@@ -116,7 +113,7 @@ class Engine:
         def on_context_state_lost():
             for scene in self.scene_manager:
                 try:
-                    if not scene.context_state_lost(): return
+                    if scene.context_state_lost() is False: return
                 except Exception as e:
                     if self.config['catch_events']:
                         self.logger.exception(e)
@@ -127,7 +124,7 @@ class Engine:
         def on_deactivate():
             for scene in self.scene_manager:
                 try:
-                    if not scene.deactivate(): return
+                    if scene.deactivate()is False: return
                 except Exception as e:
                     if self.config['catch_events']:
                         self.logger.exception(e)
@@ -138,7 +135,7 @@ class Engine:
         def on_draw(*args):
             for scene in self.scene_manager:
                 try:
-                    if not scene.draw(): return
+                    if scene.draw()is False: return
                 except Exception as e:
                     if self.config['catch_events']:
                         self.logger.exception(e)
@@ -149,7 +146,7 @@ class Engine:
         def on_expose():
             for scene in self.scene_manager:
                 try:
-                    if not scene.expose(): return
+                    if scene.expose()is False: return
                 except Exception as e:
                     if self.config['catch_events']:
                         self.logger.exception(e)
@@ -160,7 +157,7 @@ class Engine:
         def on_hide():
             for scene in self.scene_manager:
                 try:
-                    if not scene.hide(): return
+                    if scene.hide()is False: return
                 except Exception as e:
                     if self.config['catch_events']:
                         self.logger.exception(e)
@@ -171,7 +168,7 @@ class Engine:
         def on_key_press(symbol, modifiers):
             for scene in self.scene_manager:
                 try:
-                    if not scene.key_press(symbol, modifiers): return
+                    if scene.key_press(symbol, modifiers)is False: return
                 except Exception as e:
                     if self.config['catch_events']:
                         self.logger.exception(e)
@@ -184,7 +181,7 @@ class Engine:
         def on_key_release(*args):
             for scene in self.scene_manager:
                 try:
-                    if not scene.key_release(*args): return
+                    if scene.key_release(*args)is False: return
                 except Exception as e:
                     if self.config['catch_events']:
                         self.logger.exception(e)
@@ -195,7 +192,7 @@ class Engine:
         def on_mouse_drag(*args):
             for scene in self.scene_manager:
                 try:
-                    if not scene.mouse_drag(*args): return
+                    if scene.mouse_drag(*args)is False: return
                 except Exception as e:
                     if self.config['catch_events']:
                         self.logger.exception(e)
@@ -206,7 +203,7 @@ class Engine:
         def on_mouse_enter(*args):
             for scene in self.scene_manager:
                 try:
-                    if not scene.mouse_enter(*args): return
+                    if scene.mouse_enter(*args)is False: return
                 except Exception as e:
                     if self.config['catch_events']:
                         self.logger.exception(e)
@@ -217,7 +214,7 @@ class Engine:
         def on_mouse_leave(*args):
             for scene in self.scene_manager:
                 try:
-                    if not scene.mouse_leave(*args): return
+                    if scene.mouse_leave(*args)is False: return
                 except Exception as e:
                     if self.config['catch_events']:
                         self.logger.exception(e)
@@ -228,7 +225,7 @@ class Engine:
         def on_mouse_motion(*args):
             for scene in self.scene_manager:
                 try:
-                    if not scene.mouse_motion(*args): return
+                    if scene.mouse_motion(*args)is False: return
                 except Exception as e:
                     if self.config['catch_events']:
                         self.logger.exception(e)
@@ -239,7 +236,7 @@ class Engine:
         def on_mouse_press(*args):
             for scene in self.scene_manager:
                 try:
-                    if not scene.mouse_press(*args): return
+                    if scene.mouse_press(*args)is False: return
                 except Exception as e:
                     if self.config['catch_events']:
                         self.logger.exception(e)
@@ -250,7 +247,7 @@ class Engine:
         def on_mouse_scroll(*args):
             for scene in self.scene_manager:
                 try:
-                    if not scene.mouse_scroll(*args): return
+                    if scene.mouse_scroll(*args)is False: return
                 except Exception as e:
                     if self.config['catch_events']:
                         self.logger.exception(e)
@@ -261,7 +258,7 @@ class Engine:
         def on_mouse_release(*args):
             for scene in self.scene_manager:
                 try:
-                    if not scene.mouse_release(*args): return
+                    if scene.mouse_release(*args)is False: return
                 except Exception as e:
                     if self.config['catch_events']:
                         self.logger.exception(e)
@@ -272,7 +269,7 @@ class Engine:
         def on_move(*args):
             for scene in self.scene_manager:
                 try:
-                    if not scene.move(*args): return
+                    if scene.move(*args)is False: return
                 except Exception as e:
                     if self.config['catch_events']:
                         self.logger.exception(e)
@@ -288,7 +285,7 @@ class Engine:
             self.size = [x, y]
             for scene in self.scene_manager:
                 try:
-                    if not scene.resize(x, y): return
+                    if scene.resize(x, y)is False: return
                 except Exception as e:
                     if self.config['catch_events']:
                         self.logger.exception(e)
@@ -299,7 +296,7 @@ class Engine:
         def on_show():
             for scene in self.scene_manager:
                 try:
-                    if not scene.show(): return
+                    if scene.show()is False: return
                 except Exception as e:
                     if self.config['catch_events']:
                         self.logger.exception(e)
@@ -309,7 +306,7 @@ class Engine:
         def update(*args):
             for scene in self.scene_manager:
                 try:
-                    if not scene.update(): return
+                    if scene.update()is False: return
                 except Exception as e:
                     if self.config['catch_events']:
                         self.logger.exception(e)

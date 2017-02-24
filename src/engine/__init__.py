@@ -1,4 +1,7 @@
-__all__ = ['engine', 'scene', 'pathfinding']
+__all__ = ['engine', 'scene', 'buttons']
 
+from engine.components import scene
 from engine.engine import Engine
-from engine.scene import Scene
+from engine.components import buttons
+
+print('complete')
